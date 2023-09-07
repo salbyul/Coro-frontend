@@ -1,22 +1,42 @@
-<script setup></script>
+<script setup>
+import { memberLogin } from '../api/member';
+import { email, password } from '../composables/useHandlingMemberData';
+import { setToken } from '../composables/useHandlingToken';
+
+// 로그인 버튼 클릭 시
+const login = async () => {
+    try {
+        const member = { email: email.value, password: password.value };
+        const data = await memberLogin(member);
+        console.log(data);
+        console.log(data.body.token);
+        setToken(data.body.token);
+    } catch (error) {
+        console.log(error);
+    }
+};
+</script>
 <template>
     <div>
-        <img src="../../public/logo/five.png" class="w-5/12 mx-auto" />
+        <img src="/logo/five.png" class="w-5/12 mx-auto" />
         <div class="py-3">
             <input
                 type="text"
                 name="email"
                 placeholder="이메일을 입력해주세요."
                 class="text-sm pl-1 border py-1 block mx-auto mb-2 w-3/12"
+                v-model="email"
             />
             <input
                 type="password"
                 name="password"
                 placeholder="비밀번호를 입력해주세요."
                 class="text-sm pl-1 border py-1 block mx-auto mb-2 w-3/12"
+                v-model="password"
             />
             <button
                 class="px-1.5 py-1 border w-3/12 bg-gray-50 rounded-md mb-3 mx-auto block duration-150 hover:duration-150 hover:bg-gray-100"
+                @click="login"
             >
                 로그인
             </button>
