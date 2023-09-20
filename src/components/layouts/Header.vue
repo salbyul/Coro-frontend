@@ -1,5 +1,6 @@
 <script setup>
 import { hasToken, removeToken } from '../../composables/useHandlingToken';
+import Search from '../Search.vue';
 
 function logout() {
     removeToken();
@@ -16,15 +17,18 @@ function logout() {
         </div>
         <div class="flex justify-between" v-if="hasToken()">
             <div class="ml-3">
-                <button
-                    class="px-3 py-1 border border-gray-300 rounded-md bg-green-200 text-gray-700"
-                >
-                    모임 만들기
-                </button>
+                <router-link to="/create/moim">
+                    <button
+                        class="px-3 py-1 border border-gray-300 rounded-md bg-green-200 text-gray-700"
+                    >
+                        모임 만들기
+                    </button>
+                </router-link>
             </div>
             <div class="mr-3">
                 <button @click="logout">logout</button>
             </div>
         </div>
+        <Search></Search>
     </div>
 </template>
