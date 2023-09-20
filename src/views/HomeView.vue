@@ -1,5 +1,11 @@
-<script setup></script>
+<script setup>
+import Search from '../components/Search.vue';
+</script>
 <template>
-    <div>This is HomeView</div>
-    <button v-on:click="clickMe">click me!</button>
+    <div>
+        <Search></Search>
+        <div>
+            <div>Main Section</div>
+        </div>
+    </div>
 </template>

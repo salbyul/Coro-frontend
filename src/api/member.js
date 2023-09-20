@@ -7,5 +7,5 @@ export function memberRegister(member) {
 
 // 로그인
 export function memberLogin(member) {
-    return http.put('/members/login', member);
+    return http.post('/members/login', member);
 }

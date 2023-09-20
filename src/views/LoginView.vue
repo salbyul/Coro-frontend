@@ -1,20 +1,29 @@
 <script setup>
+import { onBeforeMount } from 'vue';
 import { memberLogin } from '../api/member';
 import { email, password } from '../composables/useHandlingMemberData';
-import { setToken } from '../composables/useHandlingToken';
+import { hasToken, setToken } from '../composables/useHandlingToken';
 
 // 로그인 버튼 클릭 시
 const login = async () => {
     try {
         const member = { email: email.value, password: password.value };
         const data = await memberLogin(member);
-        console.log(data);
-        console.log(data.body.token);
         setToken(data.body.token);
+        window.location.href = '/';
     } catch (error) {
-        console.log(error);
+        const code = error.response.data.code;
+        if (code === '100') {
+            alert('아이디나 비밀번호를 확인해주세요.');
+        }
     }
 };
+onBeforeMount(() => {
+    if (hasToken()) {
+        alert('먼저 로그아웃을 해야 합니다.');
+        window.location.href = '/';
+    }
+});
 </script>
 <template>
     <div>

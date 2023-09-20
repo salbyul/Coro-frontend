@@ -1,4 +1,5 @@
 <script setup>
+import { onBeforeMount } from 'vue';
 import {
     email,
     password,
@@ -25,6 +26,12 @@ const register = async () => {
         }
     }
 };
+onBeforeMount(() => {
+    if (hasToken()) {
+        alert('먼저 로그아웃을 해야 합니다.');
+        window.location.href = '/';
+    }
+});
 </script>
 <template>
     <div class="text-center">
