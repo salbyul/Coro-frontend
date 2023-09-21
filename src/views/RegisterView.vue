@@ -9,6 +9,7 @@ import {
     createMemberObject,
 } from '../composables/useHandlingMemberData';
 import { memberRegister } from '../api/member';
+import { hasToken } from '../composables/useHandlingToken';
 
 // 회원가입 버튼 클릭 시
 const register = async () => {
