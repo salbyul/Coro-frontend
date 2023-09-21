@@ -83,7 +83,6 @@ onBeforeMount(() => {
 });
 </script>
 <template>
-    <button @click="test">show log</button>
     <div class="text-center">
         <!-- 모임 명 -->
         <div class="my-7">
