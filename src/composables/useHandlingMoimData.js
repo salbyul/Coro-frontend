@@ -73,7 +73,7 @@ const validateIntroduction = () => {
     return true;
 };
 
-export const init = () => {
+export const moimDataInit = () => {
     name.value = '';
     introduction.value = '';
     visible.value = 'true';

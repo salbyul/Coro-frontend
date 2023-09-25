@@ -1,7 +1,7 @@
 <script setup>
 import { onBeforeMount } from 'vue';
 import {
-    init,
+    moimDataInit,
     name,
     introduction,
     visible,
@@ -13,6 +13,14 @@ import {
     verifyData,
 } from '../composables/useHandlingMoimData';
 import { moimRegister } from '../api/moim';
+import { applicationQuestionRegister } from '../api/applicationQuestion';
+import {
+    questionListInit,
+    addQuestion,
+    deleteQuestion,
+    getQuestionList,
+    sequence,
+} from '../composables/useHandlingApplicationData';
 
 // 태그 추가 메서드
 function clickAddTag(e) {
@@ -69,17 +77,52 @@ async function submit() {
 
         const data = await moimRegister(form);
         const id = data.body.moimId;
+        await applicationQuestionRegister(getQuestionList(), id);
         window.location.href = `/moim/${id}`;
     } catch (error) {
-        const code = error.response.data.code;
+        console.log(error);
         if (code === '211') {
             alert('모임명이 중복됩니다.');
+        } else if (code === '242') {
+            alert('태그가 올바르지 않습니다.');
         }
     }
 }
 
+const clickAddQuestion = (e) => {
+    const questionBox = document.getElementById('applicationBox');
+
+    const div = document.createElement('div');
+    div.className = 'flex justify-center my-4';
+    div.id = 'application' + sequence.value++;
+
+    const textarea = document.createElement('textarea');
+    textarea.className =
+        'resize-none w-5/12 border p-2.5 placeholder:text-center';
+    textarea.placeholder = '지원자에게 물어볼 질문을 적어주세요.';
+
+    const button = document.createElement('button');
+    button.className =
+        'border px-3 py-1.5 bg-red-200 rounded-full block ml-4 my-2 duration-150 hover:duration-150 hover:bg-red-300';
+    button.innerText = 'X';
+    button.onclick = clickDeleteQuestion;
+
+    div.appendChild(textarea);
+    div.append(button);
+    questionBox.insertBefore(div, e.target);
+    addQuestion(div);
+    textarea.focus();
+};
+
+const clickDeleteQuestion = (e) => {
+    const questionBox = e.target.parentNode;
+    deleteQuestion(questionBox);
+    questionBox.remove();
+};
+
 onBeforeMount(() => {
-    init();
+    moimDataInit();
+    questionListInit();
 });
 </script>
 <template>
@@ -100,7 +143,7 @@ onBeforeMount(() => {
             <h2 class="text-xl mb-3">모임 소개</h2>
             <textarea
                 placeholder="500자 이내로 모임을 소개해주세요."
-                class="resize-none w-5/12 border p-2.5"
+                class="resize-none w-5/12 border p-2.5 placeholder:text-center"
                 v-model="introduction"
             ></textarea>
         </div>
@@ -117,7 +160,7 @@ onBeforeMount(() => {
                 v-model="visible"
                 checked
             />
-            <label :for="visible" class="mr-4">공개</label>
+            <label for="visible" class="mr-4">공개</label>
             <input
                 type="radio"
                 name="visible"
@@ -126,7 +169,7 @@ onBeforeMount(() => {
                 value="false"
                 v-model="visible"
             />
-            <label :for="invisible" class="mr-4">비공개</label>
+            <label for="invisible" class="mr-4">비공개</label>
         </div>
 
         <!-- 태그 -->
@@ -155,7 +198,7 @@ onBeforeMount(() => {
                 class="mr-2"
                 v-model="type"
             />
-            <label :for="faceToFace" class="mr-4">대면</label>
+            <label for="faceToFace" class="mr-4">대면</label>
             <input
                 type="radio"
                 name="type"
@@ -164,7 +207,7 @@ onBeforeMount(() => {
                 class="mr-2"
                 v-model="type"
             />
-            <label :for="nonContact" class="mr-4">비대면</label>
+            <label for="nonContact" class="mr-4">비대면</label>
             <input
                 type="radio"
                 name="type"
@@ -173,7 +216,23 @@ onBeforeMount(() => {
                 class="mr-2"
                 v-model="type"
             />
-            <label :for="mixed" class="mr-4">혼합</label>
+            <label for="mixed" class="mr-4">혼합</label>
+        </div>
+
+        <!-- 지원 양식 -->
+        <div class="my-7">
+            <h1 class="text-xl">지원 양식</h1>
+            <div id="applicationBox">
+                <div class="flex justify-center my-4" id="application1">
+                    <!-- 지원 질문 추가되는 자리 -->
+                </div>
+                <button
+                    class="border px-3 py-1.5 rounded-full block mx-auto my-2 duration-150 hover:duration-150 hover:bg-gray-50"
+                    @click="clickAddQuestion"
+                >
+                    +
+                </button>
+            </div>
         </div>
 
         <!-- 버튼 -->
