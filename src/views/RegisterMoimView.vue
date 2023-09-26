@@ -13,7 +13,6 @@ import {
     verifyData,
 } from '../composables/useHandlingMoimData';
 import { moimRegister } from '../api/moim';
-import { applicationQuestionRegister } from '../api/applicationQuestion';
 import {
     questionListInit,
     addQuestion,
@@ -62,6 +61,7 @@ async function submit() {
         }
         const moim = generateMoimObject();
         const tagList = generateTagListObject();
+        const questionList = getQuestionList();
 
         const form = new FormData();
 
@@ -75,9 +75,14 @@ async function submit() {
         });
         form.append('tagList', tagListBlob);
 
+        const jsonQuestionList = JSON.stringify(questionList);
+        const questionBlob = new Blob([jsonQuestionList], {
+            type: 'application/json',
+        });
+        form.append('applicationQuestionList', questionBlob);
+
         const data = await moimRegister(form);
         const id = data.body.moimId;
-        await applicationQuestionRegister(getQuestionList(), id);
         window.location.href = `/moim/${id}`;
     } catch (error) {
         console.log(error);
@@ -118,6 +123,10 @@ const clickDeleteQuestion = (e) => {
     const questionBox = e.target.parentNode;
     deleteQuestion(questionBox);
     questionBox.remove();
+};
+
+const goBack = () => {
+    window.history.back();
 };
 
 onBeforeMount(() => {
@@ -245,6 +254,7 @@ onBeforeMount(() => {
             </button>
             <button
                 class="px-3 py-1.5 border duration-150 bg-gray-200 rounded-md hover:duration-150 hover:bg-gray-300"
+                @click="goBack"
             >
                 취소
             </button>

@@ -21,11 +21,13 @@ export const questionListInit = () => {
 export const getQuestionList = () => {
     let order = 1;
     const result = [];
-    questionList.value.forEach((question) =>
-        result.push({
-            content: question.childNodes[0].value,
-            order: order++,
-        })
-    );
+    questionList.value.forEach((question) => {
+        if (question.childNodes[0].value !== '') {
+            result.push({
+                content: question.childNodes[0].value,
+                order: order++,
+            });
+        }
+    });
     return result;
 };
