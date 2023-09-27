@@ -1,5 +1,6 @@
 <script setup>
 import { hasToken, removeToken } from '../../composables/useHandlingToken';
+import Search from '../Search.vue';
 
 function logout() {
     removeToken();
@@ -33,6 +34,9 @@ function logout() {
                 </button>
                 <button @click="logout">logout</button>
             </div>
+        </div>
+        <div class="mt-5" v-if="hasToken()">
+            <Search></Search>
         </div>
     </div>
 </template>

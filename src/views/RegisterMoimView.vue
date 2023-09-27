@@ -8,6 +8,8 @@ import {
     addTag,
     deleteTag,
     type,
+    photo,
+    changeFile,
     generateMoimObject,
     generateTagListObject,
     verifyData,
@@ -81,6 +83,8 @@ async function submit() {
         });
         form.append('applicationQuestionList', questionBlob);
 
+        form.append('photo', photo.value);
+
         const data = await moimRegister(form);
         const id = data.body.moimId;
         window.location.href = `/moim/${id}`;
@@ -94,6 +98,7 @@ async function submit() {
     }
 }
 
+// 질문 추가 버튼 클릭 시
 const clickAddQuestion = (e) => {
     const questionBox = document.getElementById('applicationBox');
 
@@ -119,6 +124,7 @@ const clickAddQuestion = (e) => {
     textarea.focus();
 };
 
+// 지원 질문 삭제 버튼 클릭 시
 const clickDeleteQuestion = (e) => {
     const questionBox = e.target.parentNode;
     deleteQuestion(questionBox);
@@ -129,6 +135,50 @@ const goBack = () => {
     window.history.back();
 };
 
+const preview = () => {
+    const previewPhoto = createNewPreviewPhoto();
+    const reader = new FileReader();
+    reader.readAsDataURL(photo.value);
+    reader.onload = () => {
+        previewPhoto.src = reader.result;
+    };
+};
+
+// 모임 사진 미리보기 생성 메서드
+const createNewPreviewPhoto = () => {
+    var previewPhoto = document.getElementById('previewPhoto');
+    if (previewPhoto !== null) {
+        previewPhoto.remove();
+    }
+    previewPhoto = document.createElement('img');
+    previewPhoto.id = 'previewPhoto';
+    previewPhoto.className = 'w-7/12 mx-auto my-3 hover:cursor-pointer';
+    previewPhoto.onclick = removePhoto;
+
+    const photoBox = document.getElementById('photoBox');
+    photoBox.appendChild(previewPhoto);
+    return previewPhoto;
+};
+
+// 모임 사진 클릭 시 삭제 메서드
+const removePhoto = () => {
+    photo.value = null;
+    const previewPhoto = document.getElementById('previewPhoto');
+    previewPhoto.remove();
+
+    const photoInput = document.getElementById('photoInput');
+    photoInput.value = '';
+};
+
+// 모임 사진 변경 시 메서드
+const onChangedPhoto = (e) => {
+    if (e.target.files.length === 0) {
+        return;
+    }
+    changeFile(e.target.files[0]);
+    preview();
+};
+
 onBeforeMount(() => {
     moimDataInit();
     questionListInit();
@@ -136,6 +186,24 @@ onBeforeMount(() => {
 </script>
 <template>
     <div class="text-center">
+        <!-- 모임 사진 -->
+        <div class="my-7">
+            <h2 class="text-xl mb-3">모임 사진</h2>
+            <div id="photoBox"></div>
+            <input
+                type="file"
+                hidden
+                id="photoInput"
+                accept="image/*"
+                @change="onChangedPhoto"
+            />
+            <label
+                for="photoInput"
+                class="px-3 py-1.5 bg-gray-100 rounded-md duration-150 hover:duration-150 hover:bg-gray-200 hover:cursor-pointer"
+            >
+                사진 선택</label
+            >
+        </div>
         <!-- 모임 명 -->
         <div class="my-7">
             <h2 class="text-xl mb-3">모임 명</h2>

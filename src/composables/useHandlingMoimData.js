@@ -4,7 +4,12 @@ export const name = ref('');
 export const introduction = ref('');
 export const visible = ref('true');
 export const type = ref('faceToFace');
+export const photo = ref(null);
 const tagList = ref([]);
+
+export const changeFile = (file) => {
+    photo.value = file;
+};
 
 export const addTag = (tag) => {
     validateTag(tag);
