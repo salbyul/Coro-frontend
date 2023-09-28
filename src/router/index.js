@@ -5,6 +5,7 @@ import RegisterView from '../views/RegisterView.vue';
 import RegisterMoimView from '../views/RegisterMoimView.vue';
 import MoimDetailView from '../views/MoimDetailView.vue';
 import SearchView from '../views/SearchView.vue';
+import JoinMoimView from '../views/JoinMoimView.vue';
 
 const routes = [
     { path: '/', component: HomeView },
@@ -13,6 +14,7 @@ const routes = [
     { path: '/create/moim', component: RegisterMoimView },
     { path: '/moim/:id', component: MoimDetailView },
     { path: '/search', component: SearchView },
+    { path: '/moim/join/:id', component: JoinMoimView },
 ];
 
 const router = createRouter({

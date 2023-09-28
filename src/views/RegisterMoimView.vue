@@ -21,7 +21,7 @@ import {
     deleteQuestion,
     getQuestionList,
     sequence,
-} from '../composables/useHandlingApplicationData';
+} from '../composables/useHandlingApplicationQuestionData';
 
 // 태그 추가 메서드
 function clickAddTag(e) {

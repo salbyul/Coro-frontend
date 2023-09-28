@@ -7,6 +7,10 @@ export function moimRegister(moim) {
 
 export function search(option, value, page, size) {
     return http.get(
-        `/moims?option=${option}&value=${value}&page=${page}&size=${size}`
+        `/moims/search?option=${option}&value=${value}&page=${page}&size=${size}`
     );
+}
+
+export function getDetail(moimId) {
+    return http.get(`/moims/${moimId}`);
 }

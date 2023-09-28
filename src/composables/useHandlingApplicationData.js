@@ -1,33 +1,35 @@
 import { ref } from 'vue';
 
-const questionList = ref([]);
-export const sequence = ref(1);
+const applicationList = ref([]);
 
-export const addQuestion = (questionDiv) => {
-    questionList.value.push(questionDiv);
-};
-
-export const deleteQuestion = (questionDiv) => {
-    const newList = questionList.value.filter(
-        (question) => question.id !== questionDiv.id
-    );
-    questionList.value = newList;
-};
-
-export const questionListInit = () => {
-    questionList.value = [];
-};
-
-export const getQuestionList = () => {
-    let order = 1;
-    const result = [];
-    questionList.value.forEach((question) => {
-        if (question.childNodes[0].value !== '') {
-            result.push({
-                content: question.childNodes[0].value,
-                order: order++,
-            });
+export const setApplicationQuestion = (e, order) => {
+    applicationList.value.forEach((application) => {
+        if (application.order === order) {
+            application.content = e.target.value;
         }
     });
-    return result;
+};
+
+export const init = (applicationQuestions) => {
+    applicationQuestions.forEach((question) => {
+        applicationList.value.push({ content: '', order: question.order });
+    });
+};
+
+export const validateApplicationData = () => {
+    for (let i = 0; i < applicationList.value.length; i++) {
+        const application = applicationList.value.at(i);
+        if (application.content === '') {
+            return false;
+        }
+    }
+    return true;
+};
+
+export const getApplication = () => {
+    const application = [];
+    for (let i = 0; i < applicationList.value.length; i++) {
+        application.push(applicationList.value.at(i));
+    }
+    return application;
 };
