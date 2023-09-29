@@ -3,6 +3,7 @@ import { onBeforeMount, ref } from 'vue';
 import {
     getApplicationQuestionList,
     submitApplication,
+    fetchApplicationList,
 } from '../api/application';
 import { useRoute } from 'vue-router';
 import {
@@ -26,29 +27,31 @@ const submit = async () => {
             alert('모든 질문에 답변을 해야 합니다.');
             return;
         }
-        const application = getApplication();
-        console.log(application);
-        const form = new FormData();
+        const applicationList = getApplication();
 
-        // TODO 데이터 어떻게 보낼 것인지 정해야 함
-        const jsonApplication = JSON.stringify(application);
-        const applicationBlob = new Blob([jsonApplication], {
-            type: 'application/json',
-        });
-        form.append('application', applicationBlob);
-
-        const data = await submitApplication(form, moimId);
-        console.log(data);
+        const data = await submitApplication({ applicationList }, moimId);
+        alert('지원이 완료되었습니다.');
+        window.location.href = `/moim/${moimId}`;
     } catch (error) {
+        const code = error.response.data.code;
         console.log(error);
+        if (code === '306') {
+            alert('이미 지원한 모임입니다.');
+        }
     }
 };
 
 onBeforeMount(async () => {
     try {
-        const data = await getApplicationQuestionList(moimId);
-        questionList.value = data.body.questionList;
-        init(data.body.questionList);
+        const applicationList = await fetchApplicationList(moimId, 'wait');
+        if (applicationList.body.applicationList.length > 0) {
+            alert('이미 지원한 모임입니다.');
+            goBack();
+        }
+        const fetchedquestionList = await getApplicationQuestionList(moimId);
+        console.log(fetchedquestionList);
+        questionList.value = fetchedquestionList.body.questionList;
+        init(fetchedquestionList.body.questionList);
     } catch (error) {
         console.log(error);
     }

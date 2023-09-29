@@ -21,6 +21,7 @@ import {
     deleteQuestion,
     getQuestionList,
     sequence,
+    canAddQuestion,
 } from '../composables/useHandlingApplicationQuestionData';
 
 // 태그 추가 메서드
@@ -100,6 +101,10 @@ async function submit() {
 
 // 질문 추가 버튼 클릭 시
 const clickAddQuestion = (e) => {
+    if (!canAddQuestion()) {
+        alert('질문은 10개까지만 추가가 가능합니다.');
+        return;
+    }
     const questionBox = document.getElementById('applicationBox');
 
     const div = document.createElement('div');

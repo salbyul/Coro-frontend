@@ -7,6 +7,13 @@ export const addQuestion = (questionDiv) => {
     questionList.value.push(questionDiv);
 };
 
+export const canAddQuestion = () => {
+    if (questionList.value.length === 10) {
+        return false;
+    }
+    return true;
+};
+
 export const deleteQuestion = (questionDiv) => {
     const newList = questionList.value.filter(
         (question) => question.id !== questionDiv.id

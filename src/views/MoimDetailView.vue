@@ -34,6 +34,7 @@ onBeforeMount(async () => {
             <hr />
             <div class="text-end my-3">
                 <button
+                    v-if="!detail.joined"
                     class="px-3 py-1.5 border bg-sky-200 text-gray-700 rounded-md duration-150 hover:duration-150 hover:bg-sky-300"
                     @click="join"
                 >
