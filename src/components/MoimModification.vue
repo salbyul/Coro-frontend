@@ -1,20 +1,22 @@
 <script setup>
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { fetchDataForModification, updateMoim } from '../api/moim';
 import {
     moimDataInit,
     name,
     introduction,
     visible,
-    addTag,
-    deleteTag,
     type,
     photo,
+    addTag,
     changeFile,
+    isDeletedPhoto,
+    deleteTag,
+    verifyData,
     generateMoimObject,
     generateTagListObject,
-    verifyData,
 } from '../composables/useHandlingMoimData';
-import { moimRegister } from '../api/moim';
 import {
     questionListInit,
     addQuestion,
@@ -24,120 +26,32 @@ import {
     canAddQuestion,
 } from '../composables/useHandlingApplicationQuestionData';
 
-// 태그 추가 메서드
-function clickAddTag(e) {
-    const tag = e.target.value;
-    try {
+const route = useRoute();
+const id = route.params.id;
+const hasPhoto = ref(false);
+const initPhoto = ref('');
+const initPhotoName = ref('');
+
+const dataMapping = (data) => {
+    name.value = data.name;
+    introduction.value = data.introduction;
+    for (let i = 0; i < data.tagList.length; i++) {
+        const tag = data.tagList.at(i);
         addTag(tag);
         addTagDiv(tag);
-        e.target.value = '';
-    } catch (error) {
-        alert(error.message);
     }
-}
-
-// 태그 화면에 추가 메서드
-function addTagDiv(tag) {
-    const tagBox = document.getElementById('tagBox');
-    const tagBtn = document.createElement('button');
-    tagBtn.className =
-        'block mx-auto border px-3 duration-150 hover:duration-150 hover:bg-gray-50 mt-2';
-    tagBtn.innerText = tag;
-    tagBtn.onclick = (e) => clickDeleteTag(e);
-    tagBtn.id = 'tag-' + tag;
-    tagBox.appendChild(tagBtn);
-}
-
-// 태그 제거 메서드
-function clickDeleteTag(e) {
-    const tag = e.target.innerText;
-    deleteTag(tag);
-    const element = document.getElementById('tag-' + tag);
-    element.remove();
-}
-
-// 모임 생성 버튼
-async function submit() {
-    try {
-        if (!verifyData()) {
-            return;
-        }
-        const moim = generateMoimObject();
-        const tagList = generateTagListObject();
-        const questionList = getQuestionList();
-
-        const form = new FormData();
-
-        const jsonMoim = JSON.stringify(moim);
-        const moimBlob = new Blob([jsonMoim], { type: 'application/json' });
-        form.append('moim', moimBlob);
-
-        const jsonTagList = JSON.stringify(tagList);
-        const tagListBlob = new Blob([jsonTagList], {
-            type: 'application/json',
-        });
-        form.append('tagList', tagListBlob);
-
-        const jsonQuestionList = JSON.stringify(questionList);
-        const questionBlob = new Blob([jsonQuestionList], {
-            type: 'application/json',
-        });
-        form.append('applicationQuestionList', questionBlob);
-
-        form.append('photo', photo.value);
-
-        const data = await moimRegister(form);
-        const id = data.body.moimId;
-        window.location.href = `/moim/${id}`;
-    } catch (error) {
-        console.log(error);
-        if (code === '211') {
-            alert('모임명이 중복됩니다.');
-        } else if (code === '242') {
-            alert('태그가 올바르지 않습니다.');
-        }
+    visible.value = data.visible;
+    type.value = data.type;
+    initPhoto.value = data.photo;
+    initPhotoName.value = data.photoName;
+    if (initPhoto.value !== null) {
+        hasPhoto.value = true;
     }
-}
-
-// 질문 추가 버튼 클릭 시
-const clickAddQuestion = (e) => {
-    if (!canAddQuestion()) {
-        alert('질문은 10개까지만 추가가 가능합니다.');
-        return;
+    const questionAddButton = document.getElementById('questionAddButton');
+    for (let i = 0; i < data.applicationQuestionList.length; i++) {
+        const question = data.applicationQuestionList.at(i);
+        clickAddQuestion(questionAddButton, question.content);
     }
-    const questionBox = document.getElementById('applicationBox');
-
-    const div = document.createElement('div');
-    div.className = 'flex justify-center my-4';
-    div.id = 'application' + sequence.value++;
-
-    const textarea = document.createElement('textarea');
-    textarea.className =
-        'resize-none w-5/12 border p-2.5 placeholder:text-center';
-    textarea.placeholder = '지원자에게 물어볼 질문을 적어주세요.';
-
-    const button = document.createElement('button');
-    button.className =
-        'border px-3 py-1.5 bg-red-200 rounded-full block ml-4 my-2 duration-150 hover:duration-150 hover:bg-red-300';
-    button.innerText = 'X';
-    button.onclick = clickDeleteQuestion;
-
-    div.appendChild(textarea);
-    div.append(button);
-    questionBox.insertBefore(div, e.target);
-    addQuestion(div);
-    textarea.focus();
-};
-
-// 지원 질문 삭제 버튼 클릭 시
-const clickDeleteQuestion = (e) => {
-    const questionBox = e.target.parentNode;
-    deleteQuestion(questionBox);
-    questionBox.remove();
-};
-
-const goBack = () => {
-    window.history.back();
 };
 
 const preview = () => {
@@ -173,6 +87,7 @@ const removePhoto = () => {
 
     const photoInput = document.getElementById('photoInput');
     photoInput.value = '';
+    isDeletedPhoto.value = true;
 };
 
 // 모임 사진 변경 시 메서드
@@ -182,19 +97,148 @@ const onChangedPhoto = (e) => {
     }
     changeFile(e.target.files[0]);
     preview();
+    isDeletedPhoto.value = false;
 };
 
-onBeforeMount(() => {
-    moimDataInit();
-    questionListInit();
+// 태그 추가 메서드
+function clickAddTag(e) {
+    const tag = e.target.value;
+    try {
+        addTag(tag);
+        addTagDiv(tag);
+        e.target.value = '';
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+// 태그 화면에 추가 메서드
+function addTagDiv(tag) {
+    const tagBox = document.getElementById('tagBox');
+    const tagBtn = document.createElement('button');
+    tagBtn.className =
+        'block mx-auto border px-3 duration-150 hover:duration-150 hover:bg-gray-50 mt-2';
+    tagBtn.innerText = tag;
+    tagBtn.onclick = (e) => clickDeleteTag(e);
+    tagBtn.id = 'tag-' + tag;
+    tagBox.appendChild(tagBtn);
+}
+
+// 태그 제거 메서드
+function clickDeleteTag(e) {
+    const tag = e.target.innerText;
+    deleteTag(tag);
+    const element = document.getElementById('tag-' + tag);
+    element.remove();
+}
+
+// 질문 추가 버튼 클릭 시
+const clickAddQuestion = (questionAddButton, value) => {
+    if (!canAddQuestion()) {
+        alert('질문은 10개까지만 추가가 가능합니다.');
+        return;
+    }
+    const questionBox = document.getElementById('applicationBox');
+
+    const div = document.createElement('div');
+    div.className = 'flex justify-center my-4';
+    div.id = 'application' + sequence.value++;
+
+    const textarea = document.createElement('textarea');
+    textarea.className =
+        'resize-none w-5/12 border p-2.5 placeholder:text-center';
+    textarea.placeholder = '지원자에게 물어볼 질문을 적어주세요.';
+    if (value !== undefined) {
+        textarea.value = value;
+    }
+    const button = document.createElement('button');
+    button.className =
+        'border px-3 py-1.5 bg-red-200 rounded-full block ml-4 my-2 duration-150 hover:duration-150 hover:bg-red-300';
+    button.innerText = 'X';
+    button.onclick = clickDeleteQuestion;
+
+    div.appendChild(textarea);
+    div.append(button);
+    questionBox.insertBefore(div, questionAddButton);
+    addQuestion(div);
+};
+
+// 지원 질문 삭제 버튼 클릭 시
+const clickDeleteQuestion = (e) => {
+    const questionBox = e.target.parentNode;
+    deleteQuestion(questionBox);
+    questionBox.remove();
+};
+
+const submit = async () => {
+    try {
+        if (!verifyData()) {
+            return;
+        }
+        const moim = generateMoimObject();
+        const tagList = generateTagListObject();
+        const questionList = getQuestionList();
+
+        const form = new FormData();
+
+        const jsonMoim = JSON.stringify(moim);
+        const moimBlob = new Blob([jsonMoim], { type: 'application/json' });
+        form.append('moim', moimBlob);
+
+        const jsonTagList = JSON.stringify(tagList);
+        const tagListBlob = new Blob([jsonTagList], {
+            type: 'application/json',
+        });
+        form.append('tagList', tagListBlob);
+
+        const jsonQuestionList = JSON.stringify(questionList);
+        const questionBlob = new Blob([jsonQuestionList], {
+            type: 'application/json',
+        });
+        form.append('applicationQuestionList', questionBlob);
+
+        form.append('photo', photo.value);
+
+        await updateMoim(id, form);
+        window.location.href = `/moim/${id}`;
+    } catch (error) {
+        console.log(error);
+        if (code === '211') {
+            alert('모임명이 중복됩니다.');
+        } else if (code === '242') {
+            alert('태그가 올바르지 않습니다.');
+        }
+    }
+};
+
+onBeforeMount(async () => {
+    try {
+        moimDataInit();
+        questionListInit();
+        const data = await fetchDataForModification(id);
+        dataMapping(data.body.detail);
+        console.log(data);
+    } catch (error) {
+        console.log(error);
+    }
 });
 </script>
 <template>
-    <div class="text-center">
+    <div class="my-10">
+        <h1 class="text-2xl">{{ name }}</h1>
         <!-- 모임 사진 -->
         <div class="my-7">
             <h2 class="text-xl mb-3">모임 사진</h2>
-            <div id="photoBox"></div>
+            <div id="photoBox">
+                <img
+                    v-if="hasPhoto"
+                    v-bind:src="`data:image/png;base64,${initPhoto}`"
+                    v-bind:alt="initPhotoName"
+                    class="w-7/12 mx-auto my-3 hover:cursor-pointer"
+                    id="previewPhoto"
+                    @click="removePhoto"
+                />
+            </div>
             <input
                 type="file"
                 hidden
@@ -210,23 +254,11 @@ onBeforeMount(() => {
             >
         </div>
 
-        <!-- 모임 명 -->
-        <div class="my-7">
-            <h2 class="text-xl mb-3">모임 명</h2>
-            <input
-                type="text"
-                placeholder="모임명을 입력하세요."
-                class="border py-1 w-5/12 text-center"
-                v-model="name"
-            />
-        </div>
-
         <!-- 모임 소개 -->
-        <div class="my-7">
-            <h2 class="text-xl mb-3">모임 소개</h2>
+        <div class="my-5">
+            <h2 class="text-xl mb-5">모임 소개</h2>
             <textarea
-                placeholder="500자 이내로 모임을 소개해주세요."
-                class="resize-none w-5/12 border h-96 p-2.5 placeholder:text-center"
+                class="resize-none w-7/12 h-96 border p-2.5 placeholder:text-center"
                 v-model="introduction"
             ></textarea>
         </div>
@@ -301,7 +333,6 @@ onBeforeMount(() => {
             />
             <label for="mixed" class="mr-4">혼합</label>
         </div>
-
         <!-- 지원 양식 -->
         <div class="my-7">
             <h1 class="text-xl">지원 양식</h1>
@@ -311,27 +342,25 @@ onBeforeMount(() => {
                 </div>
                 <button
                     class="border px-3 py-1.5 rounded-full block mx-auto my-2 duration-150 hover:duration-150 hover:bg-gray-50"
-                    @click="clickAddQuestion"
+                    @click="(e) => clickAddQuestion(e.target)"
+                    id="questionAddButton"
                 >
                     +
                 </button>
             </div>
         </div>
-
-        <!-- 버튼 -->
-        <div>
-            <button
-                class="px-3 py-1.5 border duration-150 bg-green-200 rounded-md mr-10 hover:duration-150 hover:bg-green-300"
-                @click="submit"
-            >
-                생성
-            </button>
-            <button
-                class="px-3 py-1.5 border duration-150 bg-gray-200 rounded-md hover:duration-150 hover:bg-gray-300"
-                @click="goBack"
-            >
-                취소
-            </button>
-        </div>
+    </div>
+    <div class="my-10">
+        <button
+            class="px-3 py-1.5 rounded-md bg-sky-200 text-gray-700 duration-150 hover:duration-150 hover:bg-sky-300 mr-20"
+            @click="submit"
+        >
+            수정
+        </button>
+        <button
+            class="px-3 py-1.5 rounded-md bg-red-200 text-gray-700 duration-150 hover:duration-150 hover:bg-red-300"
+        >
+            취소
+        </button>
     </div>
 </template>

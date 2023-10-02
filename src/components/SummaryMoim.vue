@@ -2,9 +2,14 @@
 import { onMounted, ref } from 'vue';
 const props = defineProps(['moim']);
 const introduction = ref('');
+const params = new URLSearchParams(location.search);
 
 const moveMoimDetail = () => {
-    window.location.href = `/moim/${props.moim.id}`;
+    let path = `/moim/${props.moim.id}`;
+    if (params.has('option') && params.has('value')) {
+        path += `?option=${params.get('option')}&value=${params.get('value')}`;
+    }
+    window.location.href = path;
 };
 
 const moveSearchByTag = (tag) => {

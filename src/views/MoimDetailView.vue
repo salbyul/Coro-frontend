@@ -14,6 +14,7 @@ const join = () => {
 onBeforeMount(async () => {
     try {
         const data = await getDetail(id);
+        console.log(data);
         detail.value = data.body.moim;
     } catch (error) {
         console.log(error);
@@ -33,13 +34,21 @@ onBeforeMount(async () => {
             </div>
             <hr />
             <div class="text-end my-3">
-                <button
+                <a
                     v-if="!detail.joined"
                     class="px-3 py-1.5 border bg-sky-200 text-gray-700 rounded-md duration-150 hover:duration-150 hover:bg-sky-300"
                     @click="join"
+                    :href="`/moim/join/${id}`"
                 >
                     가입신청
-                </button>
+                </a>
+                <a
+                    v-if="detail.canManage"
+                    class="px-3 py-1.5 border bg-sky-200 text-gray-700 rounded-md duration-150 hover:duration-150 hover:bg-sky-300"
+                    :href="`/moim/setting/${id}`"
+                >
+                    관리
+                </a>
             </div>
         </div>
         <div>

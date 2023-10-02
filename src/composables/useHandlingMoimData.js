@@ -5,6 +5,7 @@ export const introduction = ref('');
 export const visible = ref('true');
 export const type = ref('faceToFace');
 export const photo = ref(null);
+export const isDeletedPhoto = ref(false);
 const tagList = ref([]);
 
 export const changeFile = (file) => {
@@ -22,7 +23,8 @@ const validateTag = (tag) => {
 };
 const validateTagName = (tag) => {
     const regex = /[0-9a-zA-Z가-힣]{1,10}/;
-    if (tag.match(regex) === null) {
+    const result = tag.match(regex);
+    if (result === null || result[0] !== result.input) {
         throw new Error(
             '태그는 한글, 숫자, 영문으로 1자 이상, 10자 이하 이어야 합니다.'
         );
@@ -49,6 +51,7 @@ export const generateMoimObject = () => {
         introduction: introduction.value,
         type: type.value,
         visible: visible.value === 'true',
+        isDeletedPhoto: isDeletedPhoto.value,
     };
 };
 

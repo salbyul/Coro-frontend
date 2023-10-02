@@ -4,6 +4,7 @@ import { search } from '../api/moim';
 import SummaryMoim from '../components/SummaryMoim.vue';
 import Pagination from '../components/Pagination.vue';
 
+const params = new URLSearchParams(location.search);
 const isLoaded = ref(false);
 const currentData = ref({});
 const moimList = ref([]);
@@ -11,7 +12,6 @@ const page = ref('');
 
 const init = async (option, value) => {
     try {
-        const params = new URLSearchParams(location.search);
         page.value = params.has('page') ? params.get('page') : 0;
         const data = await search(option, value, Number(page.value) - 1, 10);
         currentData.value = data.body;
@@ -22,7 +22,6 @@ const init = async (option, value) => {
     }
 };
 onBeforeMount(() => {
-    const params = new URLSearchParams(location.search);
     if (!(params.has('option') && params.has('value'))) {
         window.location.href = '/';
     }
