@@ -217,7 +217,6 @@ onBeforeMount(async () => {
         questionListInit();
         const data = await fetchDataForModification(id);
         dataMapping(data.body.detail);
-        console.log(data);
     } catch (error) {
         console.log(error);
     }

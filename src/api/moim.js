@@ -25,3 +25,11 @@ export function fetchDataForModification(moimId) {
 export function updateMoim(moimId, moim) {
     return http.put(`/moims/${moimId}`, moim);
 }
+
+export function fetchMoimMember(moimId) {
+    return http.get(`/moims/${moimId}/moim-members`);
+}
+
+export function updateMoimMember(moimId, moimMemberList) {
+    return http.put(`/moims/${moimId}/moim-members`, moimMemberList);
+}
