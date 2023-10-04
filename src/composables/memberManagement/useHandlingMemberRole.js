@@ -12,6 +12,19 @@ export const initMemberList = (list) => {
             role: ref(member.role),
         });
     }
+    newList.sort((a, b) => {
+        if (a.role.value === b.role.value) {
+            return 0;
+        } else if (a.role.value === 'LEADER') {
+            return -1;
+        } else if (b.role.value === 'LEADER') {
+            return 1;
+        } else if (a.role.value === 'MANAGER') {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
     memberList.value = newList;
 };
 

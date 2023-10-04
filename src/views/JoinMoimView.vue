@@ -3,7 +3,7 @@ import { onBeforeMount, ref } from 'vue';
 import {
     getApplicationQuestionList,
     submitApplication,
-    fetchApplicationList,
+    fetchApplicationByMember,
 } from '../api/application';
 import { useRoute } from 'vue-router';
 import {
@@ -43,13 +43,12 @@ const submit = async () => {
 
 onBeforeMount(async () => {
     try {
-        const applicationList = await fetchApplicationList(moimId, 'wait');
+        const applicationList = await fetchApplicationByMember(moimId, 'wait');
         if (applicationList.body.applicationList.length > 0) {
             alert('이미 지원한 모임입니다.');
             goBack();
         }
         const fetchedquestionList = await getApplicationQuestionList(moimId);
-        console.log(fetchedquestionList);
         questionList.value = fetchedquestionList.body.questionList;
         init(fetchedquestionList.body.questionList);
     } catch (error) {

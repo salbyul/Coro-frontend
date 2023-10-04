@@ -26,7 +26,6 @@ function logout() {
                 </router-link>
             </div>
             <div class="mr-3">
-                <!-- TODO -->
                 <a
                     href="/profile/moim"
                     class="px-3 py-1.5 border bg-orange-100 rounded-md mr-3 duration-150 text-gray-700 hover:duration-150 hover:bg-orange-200"

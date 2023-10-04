@@ -14,3 +14,11 @@ export function memberLogin(member) {
 export function fetchMyMoim() {
     return http.get(`/members/moims`);
 }
+
+// 모임에 지원한 지원서 획득
+export function fetchApplicationList(moimId, status) {
+    if (status === undefined) {
+        return http.get(`/members/applications/?moim=${moimId}&status=all`);
+    }
+    return http.get(`/members/applications/?moim=${moimId}&status=${status}`);
+}

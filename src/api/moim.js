@@ -22,14 +22,22 @@ export function fetchDataForModification(moimId) {
     return http.get(`/moims/modification/${moimId}`);
 }
 
+// 모임 수정
 export function updateMoim(moimId, moim) {
     return http.put(`/moims/${moimId}`, moim);
 }
 
+// 회원 관리위한 데이터 획득
 export function fetchMoimMember(moimId) {
-    return http.get(`/moims/${moimId}/moim-members`);
+    return http.get(`/moims/${moimId}/members`);
 }
 
+// 회원 관리 업데이트
 export function updateMoimMember(moimId, moimMemberList) {
-    return http.put(`/moims/${moimId}/moim-members`, moimMemberList);
+    return http.put(`/moims/${moimId}/members`, moimMemberList);
+}
+
+// 회원 추방
+export function deportMember(moimId, id) {
+    return http.delete(`/moims/${moimId}/members?moimMember=${id}`);
 }
