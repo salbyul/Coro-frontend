@@ -35,7 +35,7 @@ onMounted(() => {
             <div>
                 <img
                     v-if="moim.photo !== null"
-                    v-bind:src="`data:image/png;base64,${moim.photo}`"
+                    v-bind:src="`data:${moim.contentType};base64,${moim.photo}`"
                     alt="image"
                     class="mx-auto"
                 />

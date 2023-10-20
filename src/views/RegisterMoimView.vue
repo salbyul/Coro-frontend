@@ -91,6 +91,7 @@ async function submit() {
         window.location.href = `/moim/${id}`;
     } catch (error) {
         console.log(error);
+        const code = error.response.data.code;
         if (code === '211') {
             alert('모임명이 중복됩니다.');
         } else if (code === '242') {
@@ -319,7 +320,7 @@ onBeforeMount(() => {
         </div>
 
         <!-- 버튼 -->
-        <div>
+        <div class="mb-10">
             <button
                 class="px-3 py-1.5 border duration-150 bg-green-200 rounded-md mr-10 hover:duration-150 hover:bg-green-300"
                 @click="submit"

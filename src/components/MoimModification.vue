@@ -31,6 +31,7 @@ const id = route.params.id;
 const hasPhoto = ref(false);
 const initPhoto = ref('');
 const initPhotoName = ref('');
+const contentType = ref('');
 
 const dataMapping = (data) => {
     name.value = data.name;
@@ -47,6 +48,7 @@ const dataMapping = (data) => {
     if (initPhoto.value !== null) {
         hasPhoto.value = true;
     }
+    contentType.value = data.contentType;
     const questionAddButton = document.getElementById('questionAddButton');
     for (let i = 0; i < data.applicationQuestionList.length; i++) {
         const question = data.applicationQuestionList.at(i);
@@ -231,7 +233,7 @@ onBeforeMount(async () => {
             <div id="photoBox">
                 <img
                     v-if="hasPhoto"
-                    v-bind:src="`data:image/png;base64,${initPhoto}`"
+                    v-bind:src="`data:${contentType};base64,${initPhoto}`"
                     v-bind:alt="initPhotoName"
                     class="w-7/12 mx-auto my-3 hover:cursor-pointer"
                     id="previewPhoto"

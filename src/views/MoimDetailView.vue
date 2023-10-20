@@ -14,7 +14,6 @@ const join = () => {
 onBeforeMount(async () => {
     try {
         const data = await getDetail(id);
-        console.log(data);
         detail.value = data.body.moim;
     } catch (error) {
         console.log(error);
@@ -35,8 +34,15 @@ onBeforeMount(async () => {
             <hr />
             <div class="text-end my-3">
                 <a
+                    v-if="detail.joined"
+                    :href="`/moim/${id}/schedule`"
+                    class="px-3 py-1.5 border bg-green-200 text-gray-700 rounded-md duration-150 hover:duration-150 hover:bg-green-300"
+                >
+                    일정
+                </a>
+                <a
                     v-if="!detail.joined"
-                    class="px-3 py-1.5 border bg-sky-200 text-gray-700 rounded-md duration-150 hover:duration-150 hover:bg-sky-300"
+                    class="px-3 py-1.5 ml-3 border bg-sky-200 text-gray-700 rounded-md duration-150 hover:duration-150 hover:bg-sky-300"
                     @click="join"
                     :href="`/moim/join/${id}`"
                 >
@@ -44,7 +50,7 @@ onBeforeMount(async () => {
                 </a>
                 <a
                     v-if="detail.canManage"
-                    class="px-3 py-1.5 border bg-sky-200 text-gray-700 rounded-md duration-150 hover:duration-150 hover:bg-sky-300"
+                    class="px-3 py-1.5 ml-3 border bg-sky-200 text-gray-700 rounded-md duration-150 hover:duration-150 hover:bg-sky-300"
                     :href="`/moim/setting/${id}`"
                 >
                     관리
@@ -55,7 +61,7 @@ onBeforeMount(async () => {
             <div class="my-4">
                 <img
                     v-if="detail.photoName !== null"
-                    v-bind:src="`data:image/png;base64,${detail.photo}`"
+                    v-bind:src="`data:${detail.contentType};base64,${detail.photo}`"
                     v-bind:alt="detail.photoName"
                     class="mx-auto"
                 />

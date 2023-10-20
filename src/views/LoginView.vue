@@ -13,7 +13,7 @@ const login = async () => {
         window.location.href = '/';
     } catch (error) {
         const code = error.response.data.code;
-        if (code === '100') {
+        if (code === '112' || code === '122') {
             alert('아이디나 비밀번호를 확인해주세요.');
         }
     }
