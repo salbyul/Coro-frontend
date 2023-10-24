@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import Day from './Day.vue';
+import DayModal from './DayModal.vue';
 import {
     getStartDay,
     getNumberOfDaysInMonth,
@@ -9,6 +10,14 @@ import {
 const props = defineProps(['dateTime']);
 const year = ref(props.dateTime.year);
 const month = ref(props.dateTime.month);
+const isVisibleModal = ref(false);
+const dateOfModal = ref(-1);
+
+const showModal = (date) => {
+    if (!date) return;
+    dateOfModal.value = date;
+    isVisibleModal.value = true;
+};
 </script>
 <template>
     <div class="my-5">
@@ -60,9 +69,17 @@ const month = ref(props.dateTime.month);
                         :line="line"
                         :day="i"
                         :lastDay="getNumberOfDaysInMonth(year, month)"
+                        :showModal="showModal"
                     ></Day>
                 </tr>
             </tbody>
         </table>
+        <DayModal
+            :show="isVisibleModal"
+            @close="isVisibleModal = false"
+            :year="year"
+            :month="month"
+            :date="dateOfModal"
+        ></DayModal>
     </div>
 </template>

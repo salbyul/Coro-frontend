@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { onBeforeMount } from 'vue';
 
-const props = defineProps(['firstDay', 'line', 'day', 'lastDay']);
+const props = defineProps(['firstDay', 'line', 'day', 'lastDay', 'showModal']);
 const date = ref();
 
 const calculateDay = () => {
@@ -24,6 +24,7 @@ onBeforeMount(() => {
 <template>
     <td
         class="border-r p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300"
+        v-on:click="() => props.showModal(date)"
     >
         <div
             class="flex flex-col h-40 xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 mx-auto"
