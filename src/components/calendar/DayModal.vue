@@ -49,6 +49,8 @@ const submitNewSchedule = async () => {
         const code = error.response.data.code;
         if (code === '531') {
             alert('오늘 이전에 일정을 생성할 수 없습니다.');
+        } else if (code === '201') {
+            alert('권한이 없습니다.');
         }
     }
 };
