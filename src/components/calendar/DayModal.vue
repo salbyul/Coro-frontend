@@ -6,7 +6,11 @@ import {
     validateSchedule,
     init,
 } from '../../composables/useHandlingSchedule';
-import { registerSchedule, fetchSchedules } from '../../api/schedule';
+import {
+    registerSchedule,
+    fetchSchedules,
+    deleteSchedule,
+} from '../../api/schedule';
 import { useRoute } from 'vue-router';
 
 const props = defineProps({
@@ -62,6 +66,16 @@ const getSchedules = async () => {
     }
 };
 
+const removeSchedule = async (scheduleId) => {
+    try {
+        await deleteSchedule(scheduleId);
+        alert('해당 일정을 삭제하였습니다.');
+        window.location.reload();
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 const closeModal = () => {
     init();
     currentOption.value = '';
@@ -93,10 +107,13 @@ const closeModal = () => {
 
                 <div class="modal-body">
                     <div v-if="currentOption === 'view'">
-                        <div v-for="(s, index) in schedules">
+                        <div v-for="(s, index) in schedules" class="my-3">
                             <div>
                                 <span>제목: {{ s.title }}</span>
-                                <button class="ml-3 text-red-500 rounded-full">
+                                <button
+                                    class="ml-3 text-red-500 rounded-full"
+                                    @click="() => removeSchedule(s.id)"
+                                >
                                     X
                                 </button>
                             </div>

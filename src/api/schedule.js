@@ -11,3 +11,7 @@ export const fetchMonthlySchedule = (moimId, date) => {
 export const fetchSchedules = (moimId, date) => {
     return http.get(`/schedules?moim=${moimId}&date=${date}`);
 };
+
+export const deleteSchedule = (scheduleId) => {
+    return http.delete(`/schedules?schedule=${scheduleId}`);
+};
