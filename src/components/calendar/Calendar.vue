@@ -1,23 +1,57 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount, watch } from 'vue';
 import Day from './Day.vue';
 import DayModal from './DayModal.vue';
 import {
     getStartDay,
     getNumberOfDaysInMonth,
 } from '../../composables/useHandlingCalendar';
+import { fetchMonthlySchedule } from '../../api/schedule';
+import { useRoute } from 'vue-router';
 
 const props = defineProps(['dateTime']);
 const year = ref(props.dateTime.year);
 const month = ref(props.dateTime.month);
 const isVisibleModal = ref(false);
-const dateOfModal = ref(-1);
+const dateOfModal = ref(1);
+const route = useRoute();
+const schedules = ref([]);
+const key = ref(0);
 
 const showModal = (date) => {
     if (!date) return;
     dateOfModal.value = date;
     isVisibleModal.value = true;
 };
+
+const getSchedule = async () => {
+    try {
+        const moimId = route.params.id;
+        const currentDate = year.value + '-' + month.value + '-01';
+        const response = await fetchMonthlySchedule(moimId, currentDate);
+        schedules.value = response.body.schedule.scheduleDTOList;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const extractSchedule = (date) => {
+    return schedules.value.filter(
+        (schedule) => schedule.theDay.split('-')[2] == date
+    );
+};
+
+const calculateDate = (day, firstDay, line) => {
+    return day - firstDay + (line - 1) * 7;
+};
+
+watch(schedules, () => {
+    key.value = key.value + 1;
+});
+
+onBeforeMount(async () => {
+    await getSchedule();
+});
 </script>
 <template>
     <div class="my-5">
@@ -65,11 +99,17 @@ const showModal = (date) => {
                 <tr v-for="line in 6" class="border-b">
                     <Day
                         v-for="i in 7"
-                        :firstDay="getStartDay(year, month)"
-                        :line="line"
-                        :day="i"
                         :lastDay="getNumberOfDaysInMonth(year, month)"
                         :showModal="showModal"
+                        :currentDate="
+                            calculateDate(i, getStartDay(year, month), line)
+                        "
+                        :schedules="
+                            extractSchedule(
+                                calculateDate(i, getStartDay(year, month), line)
+                            )
+                        "
+                        :key="key"
                     ></Day>
                 </tr>
             </tbody>
@@ -80,6 +120,7 @@ const showModal = (date) => {
             :year="year"
             :month="month"
             :date="dateOfModal"
+            :key="key"
         ></DayModal>
     </div>
 </template>

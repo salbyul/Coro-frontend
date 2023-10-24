@@ -2,23 +2,22 @@
 import { ref } from 'vue';
 import { onBeforeMount } from 'vue';
 
-const props = defineProps(['firstDay', 'line', 'day', 'lastDay', 'showModal']);
+const props = defineProps(['lastDay', 'showModal', 'currentDate', 'schedules']);
 const date = ref();
+const schedules = ref([]);
 
 const calculateDay = () => {
-    const firstDay = props.firstDay; // 시작요일
-    const line = props.line; // 몇 주
-    const day = props.day; // 요일
     const lastDay = props.lastDay; // 이 달의 마지막 날
 
-    let result = day - firstDay + (line - 1) * 7;
-    if (result > 0 && result <= lastDay) {
-        date.value = result;
+    const currentDate = props.currentDate;
+    if (currentDate > 0 && currentDate <= lastDay) {
+        date.value = currentDate;
     }
 };
 
 onBeforeMount(() => {
     calculateDay();
+    schedules.value = props.schedules;
 });
 </script>
 <template>
@@ -32,7 +31,14 @@ onBeforeMount(() => {
             <div class="top h-5 w-full">
                 <span class="text-gray-500">{{ date }}</span>
             </div>
-            <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer"></div>
+            <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer">
+                <div
+                    v-for="s in schedules"
+                    class="bg-sky-100 rounded-md text-gray-700"
+                >
+                    {{ s.title }}
+                </div>
+            </div>
         </div>
     </td>
 </template>

@@ -6,7 +6,7 @@ import {
     validateSchedule,
     init,
 } from '../../composables/useHandlingSchedule';
-import { registerSchedule } from '../../api/schedule';
+import { registerSchedule, fetchSchedules } from '../../api/schedule';
 import { useRoute } from 'vue-router';
 
 const props = defineProps({
@@ -17,6 +17,7 @@ const props = defineProps({
 });
 const route = useRoute();
 const currentOption = ref('view');
+const schedules = ref([]);
 
 const submitNewSchedule = async () => {
     const moimId = route.params.id;
@@ -25,16 +26,22 @@ const submitNewSchedule = async () => {
         return;
     }
     try {
-        const date = '' + props.year + '-' + props.month + '-' + props.date;
+        const year = props.year;
+        const month = props.month;
+        const day =
+            ('' + props.date).length === 1 ? '0' + props.date : props.date;
+        const date = year + '-' + month + '-' + day;
+        console.log(date);
         const schedule = {
             title: title.value,
             content: content.value,
-            date: new Date(date),
+            date: date,
         };
-        const response = await registerSchedule(moimId, schedule);
-        console.log(response);
+        console.log(schedule);
+        await registerSchedule(moimId, schedule);
+        alert('등록되었습니다.');
+        window.location.reload();
     } catch (error) {
-        console.log(error);
         const code = error.response.data.code;
         if (code === '531') {
             alert('오늘 이전에 일정을 생성할 수 없습니다.');
@@ -42,9 +49,22 @@ const submitNewSchedule = async () => {
     }
 };
 
+const getSchedules = async () => {
+    try {
+        schedules.value = [];
+        const moimId = route.params.id;
+        const currentDate = props.year + '-' + props.month + '-' + props.date;
+        const response = await fetchSchedules(moimId, currentDate);
+        schedules.value = response.body.schedule.scheduleDTOList;
+        currentOption.value = 'view';
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 const closeModal = () => {
     init();
-    currentOption.value = 'view';
+    currentOption.value = '';
 };
 </script>
 <template>
@@ -64,7 +84,7 @@ const closeModal = () => {
                         </button>
                         <button
                             class="px-1 border rounded-md bg-gray-50 duration-150 hover:duration-150 hover:bg-gray-100"
-                            @click="() => (currentOption = 'view')"
+                            @click="getSchedules"
                         >
                             일정 보기
                         </button>
@@ -72,8 +92,20 @@ const closeModal = () => {
                 </div>
 
                 <div class="modal-body">
-                    <div v-if="currentOption === 'view'">This is view</div>
-                    <div v-else>
+                    <div v-if="currentOption === 'view'">
+                        <div v-for="(s, index) in schedules">
+                            <div>
+                                <span>제목: {{ s.title }}</span>
+                                <button class="ml-3 text-red-500 rounded-full">
+                                    X
+                                </button>
+                            </div>
+                            <div>
+                                <span>내용: {{ s.content }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="currentOption === 'write'">
                         <div>
                             <input
                                 type="text"
