@@ -1,12 +1,17 @@
 <script setup>
+import { memberLogout } from '../../api/auth';
 import { hasToken, removeToken } from '../../composables/useHandlingToken';
 import Search from '../Search.vue';
 
-function logout() {
-    removeToken();
-    window.location.href = '/login';
-    // TODO 서버랑 통신해서 로그아웃해야 함
-}
+const logout = async () => {
+    try {
+        await memberLogout();
+        removeToken();
+        window.location.href = '/login';
+    } catch (error) {
+        console.log(error);
+    }
+};
 </script>
 <template>
     <div class="mb-10">
