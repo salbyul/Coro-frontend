@@ -9,6 +9,7 @@ import JoinMoimView from '../views/JoinMoimView.vue';
 import MyMoimView from '../views/MyMoimView.vue';
 import MoimManagementView from '../views/MoimManagementView.vue';
 import ScheduleView from '../views/ScheduleView.vue';
+import MyInformationView from '../views/MyInformationView.vue';
 
 const routes = [
     { path: '/', component: HomeView },
@@ -18,6 +19,7 @@ const routes = [
     { path: '/moim/:id', component: MoimDetailView },
     { path: '/search', component: SearchView },
     { path: '/moim/join/:id', component: JoinMoimView },
+    { path: '/profile/me', component: MyInformationView },
     { path: '/profile/moim', component: MyMoimView },
     { path: '/moim/setting/:id', component: MoimManagementView },
     { path: '/moim/:id/schedule', component: ScheduleView },

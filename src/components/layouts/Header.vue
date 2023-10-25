@@ -37,6 +37,11 @@ const logout = async () => {
                 >
                     내 모임
                 </a>
+                <a
+                    href="/profile/me"
+                    class="px-3 py-1.5 border bg-gray-100 rounded-md mr-3 duration-150 text-gray-700 hover:duration-150 hover:bg-gray-200"
+                    >내 정보</a
+                >
                 <button @click="logout">logout</button>
             </div>
         </div>
