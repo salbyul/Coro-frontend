@@ -11,9 +11,7 @@ const init = async () => {
         const data = await fetchMyMoim();
         moimList.value = data.body.list;
         isLoaded.value = true;
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 };
 
 onBeforeMount(async () => {

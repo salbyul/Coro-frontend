@@ -1,6 +1,6 @@
 <script setup>
 import { onBeforeMount } from 'vue';
-import { memberLogin } from '../api/member';
+import { memberLogin } from '../api/auth';
 import { email, password } from '../composables/useHandlingMemberData';
 import { hasToken, setToken } from '../composables/useHandlingToken';
 
@@ -9,7 +9,9 @@ const login = async () => {
     try {
         const member = { email: email.value, password: password.value };
         const data = await memberLogin(member);
-        setToken(data.body.token);
+        const accessToken = data.body.token.accessToken;
+        const refreshToken = data.body.token.refreshToken;
+        setToken(accessToken, refreshToken);
         window.location.href = '/';
     } catch (error) {
         const code = error.response.data.code;
