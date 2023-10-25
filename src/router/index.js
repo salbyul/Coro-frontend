@@ -10,6 +10,7 @@ import MyMoimView from '../views/MyMoimView.vue';
 import MoimManagementView from '../views/MoimManagementView.vue';
 import ScheduleView from '../views/ScheduleView.vue';
 import MyInformationView from '../views/MyInformationView.vue';
+import NotFoundView from '../views/NotFoundView.vue';
 
 const routes = [
     { path: '/', component: HomeView },
@@ -23,6 +24,8 @@ const routes = [
     { path: '/profile/moim', component: MyMoimView },
     { path: '/moim/setting/:id', component: MoimManagementView },
     { path: '/moim/:id/schedule', component: ScheduleView },
+    { path: '/:pathMatch(.*)*', redirect: '/404' },
+    { path: '/404', component: NotFoundView },
 ];
 
 const router = createRouter({
