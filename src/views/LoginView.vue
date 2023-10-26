@@ -29,8 +29,7 @@ onBeforeMount(() => {
 </script>
 <template>
     <div>
-        <img src="/logo/five.png" class="w-5/12 mx-auto" />
-        <div class="py-3">
+        <div class="py-3 mt-20">
             <input
                 type="text"
                 name="email"
