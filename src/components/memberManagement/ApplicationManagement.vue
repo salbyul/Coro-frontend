@@ -21,9 +21,7 @@ const decide = async (value) => {
         const data = await decideApplication(applicationId.value, value);
         alert('처리 되었습니다.');
         window.location.href = `/moim/${moimId}`;
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 };
 
 watch(applicationId, async () => {
@@ -38,9 +36,7 @@ onBeforeMount(async () => {
             applicantList.value = data.body.applicationList;
             applicationId.value = applicantList.value.at(0).id;
         }
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 });
 </script>
 <template>

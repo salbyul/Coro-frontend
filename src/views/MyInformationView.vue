@@ -24,7 +24,6 @@ const submit = async () => {
         alert('비밀번호가 변경되었습니다.');
         window.location.href = '/';
     } catch (error) {
-        console.log(error);
         const code = error.response.data.code;
         if (code === '122') {
             alert('기존 비밀번호가 올바르지 않습니다.');
@@ -36,9 +35,7 @@ onBeforeMount(async () => {
     try {
         const data = await fetchInformationForModification();
         information.value = data.body.member;
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 });
 </script>
 <template>

@@ -8,9 +8,7 @@ const logout = async () => {
         await memberLogout();
         removeToken();
         window.location.href = '/login';
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 };
 </script>
 <template>

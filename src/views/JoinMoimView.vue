@@ -34,7 +34,6 @@ const submit = async () => {
         window.location.href = `/moim/${moimId}`;
     } catch (error) {
         const code = error.response.data.code;
-        console.log(error);
         if (code === '306') {
             alert('이미 지원한 모임입니다.');
         }
@@ -51,9 +50,7 @@ onBeforeMount(async () => {
         const fetchedquestionList = await getApplicationQuestionList(moimId);
         questionList.value = fetchedquestionList.body.questionList;
         init(fetchedquestionList.body.questionList);
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 });
 </script>
 <template>

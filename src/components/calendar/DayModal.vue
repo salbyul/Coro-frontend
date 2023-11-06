@@ -63,9 +63,7 @@ const getSchedules = async () => {
         const response = await fetchSchedules(moimId, currentDate);
         schedules.value = response.body.schedule.scheduleDTOList;
         currentOption.value = 'view';
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 };
 
 const removeSchedule = async (scheduleId) => {
@@ -74,7 +72,10 @@ const removeSchedule = async (scheduleId) => {
         alert('해당 일정을 삭제하였습니다.');
         window.location.reload();
     } catch (error) {
-        console.log(error);
+        const code = error.response.data.code;
+        if (code === '201') {
+            alert('권한이 없습니다.');
+        }
     }
 };
 

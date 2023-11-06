@@ -21,9 +21,7 @@ const deport = async (id) => {
         const data = await deportMember(moimId, id);
         alert('추방되었습니다.');
         window.location.reload();
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 };
 
 const submit = async () => {
@@ -35,9 +33,7 @@ const submit = async () => {
         const data = await updateMoimMember(moimId, moimMemberList);
         alert('수정 되었습니다.');
         window.location.href = `/moim/${moimId}`;
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 };
 
 onBeforeMount(async () => {
@@ -45,9 +41,7 @@ onBeforeMount(async () => {
         const data = await fetchMoimMember(moimId);
         initMemberList(data.body.moimMemberList);
         role.value = data.body.role;
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 });
 </script>
 <template>

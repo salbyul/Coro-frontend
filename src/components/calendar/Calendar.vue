@@ -30,9 +30,7 @@ const getSchedule = async () => {
         const currentDate = year.value + '-' + month.value + '-01';
         const response = await fetchMonthlySchedule(moimId, currentDate);
         schedules.value = response.body.schedule.scheduleDTOList;
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 };
 
 const extractSchedule = (date) => {

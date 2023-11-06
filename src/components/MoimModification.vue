@@ -204,7 +204,6 @@ const submit = async () => {
         await updateMoim(id, form);
         window.location.href = `/moim/${id}`;
     } catch (error) {
-        console.log(error);
         if (code === '211') {
             alert('모임명이 중복됩니다.');
         } else if (code === '242') {
@@ -219,9 +218,7 @@ onBeforeMount(async () => {
         questionListInit();
         const data = await fetchDataForModification(id);
         dataMapping(data.body.detail);
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 });
 </script>
 <template>

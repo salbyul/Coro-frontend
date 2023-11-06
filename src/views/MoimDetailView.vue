@@ -15,9 +15,7 @@ onBeforeMount(async () => {
     try {
         const data = await getDetail(id);
         detail.value = data.body.moim;
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 });
 </script>
 <template>

@@ -90,7 +90,6 @@ async function submit() {
         const id = data.body.moimId;
         window.location.href = `/moim/${id}`;
     } catch (error) {
-        console.log(error);
         const code = error.response.data.code;
         if (code === '211') {
             alert('모임명이 중복됩니다.');

@@ -17,9 +17,7 @@ const init = async (option, value) => {
         currentData.value = data.body;
         moimList.value = data.body.list;
         isLoaded.value = true;
-    } catch (error) {
-        console.log(error);
-    }
+    } catch (error) {}
 };
 onBeforeMount(() => {
     if (!(params.has('option') && params.has('value'))) {
