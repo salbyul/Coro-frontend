@@ -12,7 +12,7 @@ function createInstance(baseURL, options) {
     return axios.create(Object.assign({ baseURL: baseURL }, options));
 }
 
-export const http = createInstance('http://3.34.79.139/api');
+export const http = createInstance('https://moim.ddns.net/api');
 
 // 토큰이 존재하면 헤더에 포함시킨다.
 http.interceptors.request.use((config) => {
